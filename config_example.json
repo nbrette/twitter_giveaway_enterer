@@ -1,0 +1,21 @@
+{
+    "bearer_token" : "YOUR_TOKEN_HERE",
+    "consumer_key" : "YOUR_KEY_HERE",
+    "consumer_secret" : "YOUR_SECRET_HERE",
+    "access_key" : "YOUR_KEY_HERE",
+    "access_secret" : "YOUR_SECRET_HERE",
+    "banned_users" : ["bot", "spot", "lvbroadcasting", "jflessauSpam", "bryster125", "MobileTekReview", "ilove70315673", "followandrt2win",
+        "traunte", "ericsonabby", "_aekkaphon", "korben"],
+    "banned_words" : ["vote", "bot", "b0t", "discord", "join", "telegram", "youtube", "dm"],
+    "research" : {
+        "fr" : "concours",
+        "en" : "giveaway"
+    },
+    "tag_sentences" : {
+        "fr" : ["C'est parti "],
+        "en" : ["Lets go "]
+    },
+    "tag_users" : ["bernardo"],
+    "sol_address" : "J3uCVJqx2pa4jAV4ai5rDwZ5a7Z823jnTGttVDX1zbX9",
+    "eth_address" : "0xADf66781F1FfAdc39d8b52EaD8c7ed52c56B3AD5"
+}
