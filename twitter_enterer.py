@@ -1,16 +1,14 @@
 import tweepy
-from tweepy import tweet
 import utils
 
 import random
 
 
-
 class Enterer():
     def __init__(self, language):
         config = utils.load_configfile("config.json")
-        self.client = tweepy.Client(config[utils.BEARER_TOKEN], config[utils.CONSUMER_KEY],
-                                    config[utils.CONSUMER_SECRET], config[utils.ACCESS_KEY], config[utils.ACCESS_SECRET])
+        self.client = tweepy.Client(config[utils.BEARER_TOKEN][0], config[utils.CONSUMER_KEY][0],
+                                    config[utils.CONSUMER_SECRET][0], config[utils.ACCESS_KEY][0], config[utils.ACCESS_SECRET][0])
         self.banned_words = config[utils.BANNED_WORDS]
         self.banned_users = config[utils.BANNED_USERS]
         self.research = config[utils.RESEARCH]
@@ -24,39 +22,23 @@ class Enterer():
     def tweet_action(self, tweet):
         tweet_content = tweet.text.lower()
         tweet_content = utils.remove_emoji(tweet_content)
-        
+
         self.client.retweet(tweet.id)
         self.client.like(tweet.id)
         self.client.follow(tweet.author_id)
         users_to_follow = self.get_users_mentioned(tweet)
         for user in users_to_follow:
             self.client.follow(user)
-        # check if tag a friend is required
-        if (("tag" in tweet_content) and (any(word in tweet_content for word in ["friends", "personnes", "personne", "amis", "pote", "amis", "potes"]))):
-            # Check how many people must be tagged
-            words = tweet_content.split()
-            index = words.index("tag")
-            words = words[index:]
-            nb_of_friends = 0
-            for word in words:
-                if word.isdigit():
-                    nb_of_friends = int(word)
-                    break
-            if (nb_of_friends > 0):
-                #tag number of friends required
-                reply = random.choice(self.tag_sentences[self.language])
-                friends = random.sample(self.tag_users, nb_of_friends)
-                for friend in friends:
-                    reply += " @"+friend
-                self.client.create_tweet(
-                    text=reply, in_reply_to_tweet_id=tweet.id)
+
+        self.tag_friend(tweet)
 
         # check if solana or ethereum adresse is required
-        if (any(word in tweet_content for word in ["drop" , "comment", "put"])) and ("address" in tweet_content):
-            if (any(w in tweet_content for w in [ "eth", "ethereum"])):
-                reply = " ETH address : {}".format(self.eth_addr)
-            elif(any(w in tweet_content for w in [ "sol", "solana"])):
+        if (any(word in tweet_content for word in ["drop", "comment", "put", "reply"])) and ("address" in tweet_content):
+
+            if(any(w in tweet_content for w in ["sol", "solana"])):
                 reply = " SOL address : {}".format(self.sol_addr)
+            else:
+                reply = " ETH address : {}".format(self.eth_addr)
             self.client.create_tweet(text=reply, in_reply_to_tweet_id=tweet.id)
 
     # check is username is in banned users from config file
@@ -81,6 +63,31 @@ class Enterer():
                 break
         return contain
     # Return a list of the id of the users mentionned in the tweet + the id of the original poster
+
+    def tag_friend(self, tweet):
+        tweet_content = tweet.text.lower()
+        tweet_content = utils.remove_emoji(tweet_content)
+        nb_of_friends = 0
+        
+        if ("tag a friend" in tweet_content) or ("tag someone" in tweet_content):
+            nb_of_friends = 1
+        if (("tag" in tweet_content) and (any(word in tweet_content for word in ["friends", "personnes", "personne", "amis", "pote", "amis", "potes"]))):
+            # Check how many people must be tagged
+            words = tweet_content.split()
+            index = words.index("tag")
+            words = words[index:]
+            for word in words:
+                if word.isdigit():
+                    nb_of_friends = int(word)
+                    break
+        if (nb_of_friends > 0):
+            # tag number of friends required
+            reply = random.choice(self.tag_sentences[self.language])
+            friends = random.sample(self.tag_users, nb_of_friends)
+            for friend in friends:
+                reply += " @"+friend
+            print("Before tag")
+            self.client.create_tweet(text=reply, in_reply_to_tweet_id=tweet.id)
 
     def get_users_mentioned(self, tweet):
         id_users = []

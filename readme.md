@@ -13,7 +13,7 @@ git clone
 cd twitter_giveaway_enterer
 mv config_example.json config.json
 # make sure to have pip install
-pip install tweepy
+pip3 install tweepy
 ```
 
 ## Configuration
