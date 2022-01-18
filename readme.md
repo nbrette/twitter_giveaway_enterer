@@ -25,16 +25,16 @@ You are now ready to fill the configuration file.
 
 | key           |     description |
 | ------------- |  -------------: |
-|   bearer_token   |    Your bearer token from twitter           |
-| consumer_key     |        Your consumer key from twitter      |
-| consumer_secret      |     Your consumer secret from twitter          |
-| access_key      |       Your access key from twitter        |
-| access_secret      |         Your access secret from twitter      |
+|   bearer_token   |    List of your bearer tokens from twitter           |
+| consumer_key     |        List of your consumer keys from twitter      |
+| consumer_secret      |     List of your consumer secrets from twitter          |
+| access_key      |       List of your access keys from twitter        |
+| access_secret      |         List of your access secrets from twitter      |
 | banned_users      |      The name of the users you want to be be ignored by the program         |
 | banned_words      |      the words you want to ignore. Basically words like youtube or telegram because it would be giveaway that requires a not doable action        |
 | research      |     A dictionnary where the key is language and the value the keyword for the tweet research. Ex: "en" : "giveaway"          |
 | tag_sentences      |     A list of sentences that you want to be used when you mention friends          |
-| tag_users      |       A list of users that will be used randomly when it's required to tag friends. AT least 5 is recommended     |
+| tag_users      |       A list of users that will be used randomly when it's required to tag friends. At least 5 is recommended     |
 | sol_address      |       Your solana addresse that will be replied to the tweet if required. Can be an empty string 
 | eth_address      |       Your ethereum addresse that will be replied to the tweet if required. Can be an empty string     |
 

@@ -8,7 +8,7 @@ class Enterer():
     def __init__(self, language):
         config = utils.load_configfile("config.json")
         self.client = tweepy.Client(config[utils.BEARER_TOKEN][0], config[utils.CONSUMER_KEY][0],
-                                    config[utils.CONSUMER_SECRET][0], config[utils.ACCESS_KEY][0], config[utils.ACCESS_SECRET][0])
+                                    config[utils.CONSUMER_SECRET][0], config[utils.ACCESS_KEY][0], config[utils.ACCESS_SECRET][0], wait_on_rate_limit=True)
         self.banned_words = config[utils.BANNED_WORDS]
         self.banned_users = config[utils.BANNED_USERS]
         self.research = config[utils.RESEARCH]
@@ -86,7 +86,6 @@ class Enterer():
             friends = random.sample(self.tag_users, nb_of_friends)
             for friend in friends:
                 reply += " @"+friend
-            print("Before tag")
             self.client.create_tweet(text=reply, in_reply_to_tweet_id=tweet.id)
 
     def get_users_mentioned(self, tweet):
