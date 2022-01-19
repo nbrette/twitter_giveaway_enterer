@@ -38,6 +38,8 @@ You are now ready to fill the configuration file.
 | sol_address      |       Your solana addresse that will be replied to the tweet if required. Can be an empty string 
 | eth_address      |       Your ethereum addresse that will be replied to the tweet if required. Can be an empty string     |
 
+Although you can put multiple tokens to use multiple accounts, be aware that this feature is not implemented yet. The first account of the list will be used.  
+
 ## Run
 
 To run the program use the following command line:  
