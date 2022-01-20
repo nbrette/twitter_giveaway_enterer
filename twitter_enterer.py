@@ -118,4 +118,8 @@ class Enterer():
             if (is_contest and not contains_bannedword):
                 link = "https://twitter.com/twitter/statuses/"+str(tweet.id)
                 print(tweet)
-                self.tweet_action(tweet)
+                # Handle potential error coming from twitter serves being over capacity
+                try:
+                    self.tweet_action(tweet)
+                except:
+                    continue

@@ -50,3 +50,9 @@ By default it supports english and french language:
 python3 main.py en
 python3 main.py fr
 ```
+
+## Potential malfunction
+
+You may notice that sometimes a tweet has only been retweeted and not liked for example. This is because twitter server can be over capacity and requests return an error so every action requested to enter the giveaway have not been performed.  
+The error is handled and the program is gonna keep going if that happens but there is no way to avoid that.  
+However it happens pretty rarely and it can change from one second to the other.
