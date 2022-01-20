@@ -1,12 +1,13 @@
 import tweepy
 import utils
-
 import random
 
 
 class Enterer():
+    #Get the language as argument in the constructor to know what language must be used to run
     def __init__(self, language):
         config = utils.load_configfile("config.json")
+        #
         self.client = tweepy.Client(config[utils.BEARER_TOKEN][0], config[utils.CONSUMER_KEY][0],
                                     config[utils.CONSUMER_SECRET][0], config[utils.ACCESS_KEY][0], config[utils.ACCESS_SECRET][0], wait_on_rate_limit=True)
         self.banned_words = config[utils.BANNED_WORDS]
@@ -29,7 +30,6 @@ class Enterer():
         users_to_follow = self.get_users_mentioned(tweet)
         for user in users_to_follow:
             self.client.follow(user)
-
         self.tag_friend(tweet)
 
         # check if solana or ethereum adresse is required
@@ -62,8 +62,8 @@ class Enterer():
                 contain = True
                 break
         return contain
-    # Return a list of the id of the users mentionned in the tweet + the id of the original poster
 
+    # Return a list of the id of the users mentionned in the tweet + the id of the original poster
     def tag_friend(self, tweet):
         tweet_content = tweet.text.lower()
         tweet_content = utils.remove_emoji(tweet_content)
@@ -88,6 +88,7 @@ class Enterer():
                 reply += " @"+friend
             self.client.create_tweet(text=reply, in_reply_to_tweet_id=tweet.id)
 
+    # return a list of every user mentionned in the tweet + the original poster
     def get_users_mentioned(self, tweet):
         id_users = []
         if (tweet.entities != None and "mentions" in tweet.entities):
@@ -97,7 +98,6 @@ class Enterer():
         return id_users
 
     # check contain certain words to know if it's a contest
-
     def check_is_contest(self, tweet):
         is_contest = False
         if (any(word in tweet.lower() for word in ["rt", "retweet"])) and ("follow" in tweet.lower()) and ("like" in tweet.lower()):
