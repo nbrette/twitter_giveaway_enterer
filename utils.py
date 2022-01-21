@@ -14,6 +14,8 @@ TAG_SENTENCES = "tag_sentences"
 TAG_USERS = "tag_users"
 SOL_ADDR = "sol_address"
 ETH_ADDR = "eth_address"
+KEY_INDEX = "key_index"
+RUN_FILE_PATH = "run_file/run.json"
 
 
 def load_configfile(filename):
@@ -39,3 +41,13 @@ def load_configfile(filename):
 
 def remove_emoji(text):
     return emoji.get_emoji_regexp().sub(u'', text)
+
+def get_key_index():
+    with open(RUN_FILE_PATH) as file:
+        data = json.load(file)
+        return data[KEY_INDEX]
+
+def update_key_index(value):
+    with open(RUN_FILE_PATH, 'w') as outfile:
+        json.dump({KEY_INDEX : value}, outfile)
+

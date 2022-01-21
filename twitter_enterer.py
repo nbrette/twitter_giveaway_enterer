@@ -2,14 +2,21 @@ import tweepy
 import utils
 import random
 
-
 class Enterer():
     #Get the language as argument in the constructor to know what language must be used to run
     def __init__(self, language):
+
         config = utils.load_configfile("config.json")
-        #
-        self.client = tweepy.Client(config[utils.BEARER_TOKEN][0], config[utils.CONSUMER_KEY][0],
-                                    config[utils.CONSUMER_SECRET][0], config[utils.ACCESS_KEY][0], config[utils.ACCESS_SECRET][0], wait_on_rate_limit=True)
+
+        self.index_key = utils.get_key_index()
+        # if last key is used reset the key index to the beggining else set it to next index
+        if (len(config[utils.BEARER_TOKEN])-1 == self.index_key):
+            utils.update_key_index(0)
+        else:
+            utils.update_key_index(self.index_key+1)
+
+        self.client = tweepy.Client(config[utils.BEARER_TOKEN][self.index_key], config[utils.CONSUMER_KEY][self.index_key],
+                                    config[utils.CONSUMER_SECRET][self.index_key], config[utils.ACCESS_KEY][self.index_key], config[utils.ACCESS_SECRET][self.index_key], wait_on_rate_limit=True)
         self.banned_words = config[utils.BANNED_WORDS]
         self.banned_users = config[utils.BANNED_USERS]
         self.research = config[utils.RESEARCH]
@@ -33,26 +40,13 @@ class Enterer():
         self.tag_friend(tweet)
 
         # check if solana or ethereum adresse is required
-        if (any(word in tweet_content for word in ["drop", "comment", "put", "reply"])) and ("address" in tweet_content):
+        if (any(word in tweet_content for word in ["drop", "comment", "put", "reply"])) and (any(w in tweet_content for w in ["address", "wallet", "$eth", "$sol"])):
 
             if(any(w in tweet_content for w in ["sol", "solana"])):
                 reply = " SOL address : {}".format(self.sol_addr)
             else:
                 reply = " ETH address : {}".format(self.eth_addr)
             self.client.create_tweet(text=reply, in_reply_to_tweet_id=tweet.id)
-
-    # check is username is in banned users from config file
-    def is_user_bot_hunter(self, user_id):
-        user = self.client.get_user(
-            id=user_id, user_fields=['profile_image_url'])
-        name = user.data.name.lower()
-        username = user.data.username.lower()
-        is_bot_hunter = False
-        if username in self.banned_users:
-            is_bot_hunter = True
-        if name in self.banned_users:
-            is_bot_hunter = True
-        return is_bot_hunter
 
     # check if one the banned words is in the tweet
     def check_contains_bannedwords(self, tweet):
@@ -68,10 +62,10 @@ class Enterer():
         tweet_content = tweet.text.lower()
         tweet_content = utils.remove_emoji(tweet_content)
         nb_of_friends = 0
+        nb_of_friends_found = False
+
         
-        if ("tag a friend" in tweet_content) or ("tag someone" in tweet_content):
-            nb_of_friends = 1
-        if (("tag" in tweet_content) and (any(word in tweet_content for word in ["friends", "personnes", "personne", "amis", "pote", "amis", "potes"]))):
+        if (("tag" in tweet_content) ):
             # Check how many people must be tagged
             words = tweet_content.split()
             index = words.index("tag")
@@ -79,9 +73,10 @@ class Enterer():
             for word in words:
                 if word.isdigit():
                     nb_of_friends = int(word)
+                    nb_of_friends_found = True
                     break
-        if (nb_of_friends > 0):
-            # tag number of friends required
+            if nb_of_friends_found == False:
+                nb_of_friends = 2
             reply = random.choice(self.tag_sentences[self.language])
             friends = random.sample(self.tag_users, nb_of_friends)
             for friend in friends:
@@ -116,10 +111,11 @@ class Enterer():
             is_contest = self.check_is_contest(tweet.text)
             contains_bannedword = self.check_contains_bannedwords(tweet.text)
             if (is_contest and not contains_bannedword):
-                link = "https://twitter.com/twitter/statuses/"+str(tweet.id)
                 print(tweet)
+                # self.tweet_action(tweet)
                 # Handle potential error coming from twitter serves being over capacity
                 try:
                     self.tweet_action(tweet)
-                except:
+                except tweepy.TweepyException as e:
+                    print("Error code : {}".format(e.__dict__))
                     continue

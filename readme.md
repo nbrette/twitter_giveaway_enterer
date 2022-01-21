@@ -20,7 +20,8 @@ pip3 install emoji
 ## Configuration
 
 This program requires a twitter developer account to access the twitter api.  
-Check out this page if you don't have one yet https://developer.twitter.com/en  
+Check out this page if you don't have one yet :  
+https://developer.twitter.com/en  
 Once you have an account create an app and generate your token.  
 You are now ready to fill the configuration file.
 
@@ -39,7 +40,8 @@ You are now ready to fill the configuration file.
 | sol_address      |       Your solana addresse that will be replied to the tweet if required. Can be an empty string 
 | eth_address      |       Your ethereum addresse that will be replied to the tweet if required. Can be an empty string     |
 
-Although you can put multiple tokens to use multiple accounts, be aware that this feature is not implemented yet. The first account of the list will be used.  
+Every time the the program will be run it will use a different set of twitter api keys  
+The file `run_file/run.json` is used only to store the index of the key that has to be used.
 
 ## Run
 
@@ -54,6 +56,7 @@ python3 main.py fr
 
 ## Potential malfunction
 
-You may notice that sometimes a tweet has only been retweeted and not liked for example. This is because twitter server can be over capacity and requests return an error so every action requested to enter the giveaway have not been performed.  
-The error is handled and the program is gonna keep going if that happens but there is no way to avoid that.  
-However it happens pretty rarely and it can change from one second to the other.
+Be aware that twitter api has different limits depending on the type of request.  
+If you shedule this program to run regularly you should try to different intervals to see if your project get banned.  
+Check this page to know more about twitter api limits:  
+https://developer.twitter.com/en/docs/twitter-api/rate-limits
