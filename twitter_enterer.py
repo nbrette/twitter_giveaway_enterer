@@ -2,31 +2,31 @@ import tweepy
 import utils
 import random
 
+CONFIG_FILENAME = "config.json"
+
+
 class Enterer():
-    #Get the language as argument in the constructor to know what language must be used to run
-    def __init__(self, language):
+    # Get the language as argument in the constructor to know what language must be used to run
+    def __init__(self, language, key):
 
-        config = utils.load_configfile("config.json")
+        config = utils.load_configfile(CONFIG_FILENAME)
+        credentials = config["credentials"][key]
 
-        self.index_key = utils.get_key_index()
-        # if last key is used reset the key index to the beggining else set it to next index
-        if (len(config[utils.BEARER_TOKEN])-1 == self.index_key):
-            utils.update_key_index(0)
-        else:
-            utils.update_key_index(self.index_key+1)
-
-        self.client = tweepy.Client(config[utils.BEARER_TOKEN][self.index_key], config[utils.CONSUMER_KEY][self.index_key],
-                                    config[utils.CONSUMER_SECRET][self.index_key], config[utils.ACCESS_KEY][self.index_key], config[utils.ACCESS_SECRET][self.index_key], wait_on_rate_limit=True)
+        self.client = tweepy.Client(credentials[utils.BEARER_TOKEN], credentials[utils.CONSUMER_KEY],
+                                    credentials[utils.CONSUMER_SECRET], credentials[utils.ACCESS_KEY], credentials[utils.ACCESS_SECRET], wait_on_rate_limit=True)
+        
         self.banned_words = config[utils.BANNED_WORDS]
         self.banned_users = config[utils.BANNED_USERS]
         self.research = config[utils.RESEARCH]
         self.tag_sentences = config[utils.TAG_SENTENCES]
         self.tag_users = config[utils.TAG_USERS]
-        self.language = language
         self.eth_addr = config[utils.ETH_ADDR]
         self.sol_addr = config[utils.SOL_ADDR]
 
+        self.language = language
+
     # Action to execute if the tweet is a contest -> follow, like, retweet, tag frieds, comment crypto wallet address
+
     def tweet_action(self, tweet):
         tweet_content = tweet.text.lower()
         tweet_content = utils.remove_emoji(tweet_content)
@@ -43,9 +43,9 @@ class Enterer():
         if (any(word in tweet_content for word in ["drop", "comment", "put", "reply"])) and (any(w in tweet_content for w in ["address", "wallet", "$eth", "$sol"])):
 
             if(any(w in tweet_content for w in ["sol", "solana"])):
-                reply = " SOL address : {}".format(self.sol_addr)
+                reply = random.choice([" SOL address : {}".format(self.eth_addr)," sol : {}".format(self.eth_addr), self.sol_addr ])
             else:
-                reply = " ETH address : {}".format(self.eth_addr)
+                reply = random.choice([" ETH address : {}".format(self.eth_addr)," eth : {}".format(self.eth_addr), self.eth_addr ])
             self.client.create_tweet(text=reply, in_reply_to_tweet_id=tweet.id)
 
     # check if one the banned words is in the tweet
@@ -64,8 +64,7 @@ class Enterer():
         nb_of_friends = 0
         nb_of_friends_found = False
 
-        
-        if (("tag" in tweet_content) ):
+        if (("tag" in tweet_content)):
             # Check how many people must be tagged
             words = tweet_content.split()
             index = words.index("tag")
@@ -75,7 +74,8 @@ class Enterer():
                     nb_of_friends = int(word)
                     nb_of_friends_found = True
                     break
-            if nb_of_friends_found == False:
+            #If no number of friends found or if the number of friends does not make sense
+            if (nb_of_friends_found == False) or (nb_of_friends > 5):
                 nb_of_friends = 2
             reply = random.choice(self.tag_sentences[self.language])
             friends = random.sample(self.tag_users, nb_of_friends)
