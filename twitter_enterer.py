@@ -40,7 +40,7 @@ class Enterer():
         self.tag_friend(tweet)
 
         # check if solana or ethereum adresse is required
-        if (any(word in tweet_content for word in ["drop", "comment", "put", "reply"])) and (any(w in tweet_content for w in ["address", "wallet", "$eth", "$sol"])):
+        if (any(word in tweet_content for word in ["drop", "comment", "put", "reply"])) and (any(w in tweet_content for w in ["address", "wallet", "$eth", "$sol","eth","sol"])):
 
             if(any(w in tweet_content for w in ["sol", "solana"])):
                 reply = random.choice([" SOL address : {}".format(self.eth_addr)," sol : {}".format(self.eth_addr), self.sol_addr ])
