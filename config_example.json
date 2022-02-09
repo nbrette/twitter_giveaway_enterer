@@ -1,19 +1,4 @@
 {
-    "bearer_token": [
-        "YOUR_TOKEN_HERE"
-    ],
-    "consumer_key": [
-        "YOUR_KEY_HERE"
-    ],
-    "consumer_secret": [
-        "YOUR_SECRET_HERE"
-    ],
-    "access_key": [
-        "YOUR_KEY_HERE"
-    ],
-    "access_secret": [
-        "YOUR_SECRET_HERE"
-    ],
     "banned_users": [
         "bot",
         "spot",
@@ -36,7 +21,14 @@
         "join",
         "telegram",
         "youtube",
-        "dm"
+        "dm",
+        "proofs",
+        "proof",
+        "pinned",
+        "FB",
+        "facebook",
+        "yt",
+        "twitch"
     ],
     "research": {
         "fr": "concours",
@@ -44,32 +36,34 @@
     },
     "tag_sentences": {
         "fr": [
+            "A ne pas manquer ",
+            "Intéressant ",
+            "Pas mal ",
+            "On va essayer de gagner ça ! ",
             "C'est parti "
         ],
         "en": [
+            "Have a look a this ",
+            "Check this out ",
+            "Have a look bro ",
+            "What about this ? ",
+            "I hope I can win this ! ",
+            "Let's try to win this ",
             "Lets go "
         ]
     },
     "tag_users": [
-        "bernardo"
+
     ],
     "sol_address": "J3uCVJqx2pa4jAV4ai5rDwZ5a7Z823jnTGttVDX1zbX9",
-    "eth_address": "0xADf66781F1FfAdc39d8b52EaD8c7ed52c56B3AD5",
+    "eth_address": "0xD890cAd84E603707dFe0e8a9a1C154c136432de8",
     "credentials": {
-        "1": {
-            "bearer_token": "",
-            "consumer_key": "",
-            "consumer_secret": "",
-            "access_key": "",
-            "access_secret": ""
-        },
-        "2": {
+        "bernardinho":{
             "bearer_token": "",
             "consumer_key": "",
             "consumer_secret": "",
             "access_key": "",
             "access_secret": ""
         }
-
     }
 }
