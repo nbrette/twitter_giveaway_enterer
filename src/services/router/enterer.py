@@ -11,14 +11,11 @@ async def enter_recents_giveaway(request : EnterRequest):
     giveaway_entered = 0
     fs_controller = FirestoreController()
     config = fs_controller.get_config(request.account)
-    print(config)
-
-    logging.debug(config)
     twitter_controller = TwitterController(config)
     try:
         tweets = twitter_controller.get_recent_tweets(research='giveaway')
     except Exception as err:
-        raise HTTPException(status_code=500, detail="Error when getting the latest tweets")
+        raise HTTPException(status_code=500, detail=f"Error when getting the latest tweets : {err}")
 
     for tweet in tweets:
         if (twitter_controller.check_is_contest(tweet.text) and twitter_controller.check_contains_bannedwords(tweet.text) is False):

@@ -1,0 +1,6 @@
+uvicorn==0.20.0
+firebase-admin==6.0.1
+fastapi==0.89.1
+emoji==2.2.0
+tweepy==4.12.1
+

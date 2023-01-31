@@ -1,4 +1,2 @@
-config.json
-__pycache__
-remover.py
-log
+**/__pycache__/
+dev.py

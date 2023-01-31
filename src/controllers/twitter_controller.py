@@ -114,7 +114,6 @@ class TwitterController():
         #Check if people must be tagged
         #If it is the case select random usernames and tag them in the comment
         nb_of_friends_to_tag = self.get_nb_of_friends_to_tag(tweet.text)
-        print(f'friends : {nb_of_friends_to_tag}')
         if nb_of_friends_to_tag > 0:
             friends_usernames = random.choices(self.config.usernames,k=nb_of_friends_to_tag)
             for username in friends_usernames:
