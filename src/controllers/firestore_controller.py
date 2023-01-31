@@ -3,7 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from models.twitter_account_credentials import TwitterAccountCredentials
 from models.config import Config
-from typing import Dict
+from typing import Dict, List
 
 
 class FirestoreController():
@@ -22,7 +22,8 @@ class FirestoreController():
 
     def __init__(self) -> None:
         cred = credentials.ApplicationDefault()
-        firebase_admin.initialize_app(cred)
+        if not firebase_admin._apps:
+            firebase_admin.initialize_app(cred)
         self.db = firestore.client()
     
     def get_credentials(self, account_name) -> TwitterAccountCredentials :
@@ -44,6 +45,19 @@ class FirestoreController():
         credentials = self.get_credentials(account_name)
         config = Config(credentials, config_document[self.BANNED_WORDS], config_document[self.ETHEREUM_ADDRESS], config_document[self.SOLANA_ADDRESS], config_document[self.SENTENCES], config_document[self.USERNAMES])
         return config
+    
+    def get_every_credentials(self) -> List[TwitterAccountCredentials]:
+        available_credentials = []
+        credentials_doc = self.db.collection(self.ADMIN_COLLECTION).document(self.CREDENTIALS_DOCUMENT).get()
+        for key, cred in credentials_doc.to_dict().items():
+            available_credential = TwitterAccountCredentials(cred['bearer_token'], cred['access_key'], cred['access_secret'], cred['consumer_key'], cred['consumer_secret'], key)
+            available_credentials.append(available_credential)
+        return available_credentials
+
+
+
+
+
     
 
 

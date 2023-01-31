@@ -1,5 +1,4 @@
-from pydantic import BaseModel, validator
-from models.account_enum import Accounts
+from pydantic import BaseModel
 
 class EnterRequest(BaseModel):
     account: str

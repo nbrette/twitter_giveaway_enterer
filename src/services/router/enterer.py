@@ -11,10 +11,12 @@ async def enter_recents_giveaway(request : EnterRequest):
     giveaway_entered = 0
     fs_controller = FirestoreController()
     config = fs_controller.get_config(request.account)
-    twitter_controller = TwitterController(config)
+    print(config)
 
+    logging.debug(config)
+    twitter_controller = TwitterController(config)
     try:
-        tweets = twitter_controller.get_recent_tweets('giveaway')
+        tweets = twitter_controller.get_recent_tweets(research='giveaway')
     except Exception as err:
         raise HTTPException(status_code=500, detail="Error when getting the latest tweets")
 
@@ -28,6 +30,15 @@ async def enter_recents_giveaway(request : EnterRequest):
                 logging.error(f'Error when entering tweet {tweet.id} : {err}')
     
     return {'giveaway_entered' : giveaway_entered}
+
+@router.get('/check_credentials')
+async def check_available_credentials():
+    fs_controller = FirestoreController()
+    available_credentials = fs_controller.get_every_credentials()
+    twitter_controller = TwitterController()
+    return twitter_controller.verify_credentials(available_credentials)    
+
+
 
 
 

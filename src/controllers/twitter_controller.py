@@ -5,12 +5,15 @@ from services.utils import remove_emoji
 import random
 import logging
 from typing import List
+from tweepy.errors import Unauthorized, Forbidden, TooManyRequests
 
 class TwitterController():
-    def __init__(self, config : Config):
-        self.client = tweepy.Client(config.credentials.bearer_token, config.credentials.consumer_key,
-                                    config.credentials.consumer_secret, config.credentials.access_key, config.credentials.access_secret, wait_on_rate_limit=True)
-        self.config = config
+    def __init__(self, config : Config = None):
+
+        if config is not None:
+            self.client = tweepy.Client(config.credentials.bearer_token, config.credentials.consumer_key,
+                                        config.credentials.consumer_secret, config.credentials.access_key, config.credentials.access_secret, wait_on_rate_limit=True)
+            self.config = config
     
     def get_recent_tweets(self, research : str):
         giveaway_tweets = []
@@ -98,6 +101,10 @@ class TwitterController():
     def enter_giveaway(self, tweet):
         self.default_action(tweet)
         tweet_to_publish = random.choice(self.config.sentences)
+        crypto_reply = self.check_crypto_address(tweet.text)
+        if crypto_reply is not None:
+            tweet_to_publish = crypto_reply
+
         
         #Get every user mentionned in the tweet and follow them
         mentionned_users = self.get_mentionned_users(tweet)
@@ -117,9 +124,39 @@ class TwitterController():
         self.client.create_tweet(text=tweet_to_publish, in_reply_to_tweet_id=tweet.id)
     
     def verify_credentials(self, credentials : List[TwitterAccountCredentials]):
+        """
+        Try to get a tweet to check if the credentials work
+        """
+        credentials_validity = {}
+        
         for credential in credentials:
-            client = tweepy.Client(credentials.bearer_token, credentials.consumer_key,
-                                    credentials.consumer_secret, credentials.access_key, credentials.access_secret, wait_on_rate_limit=True)
+            try:
+                client = tweepy.Client(credential.bearer_token, credential.consumer_key,
+                                    credential.consumer_secret, credential.access_key, credential.access_secret, wait_on_rate_limit=True)
+                client.get_tweet('474141231996350466') 
+                credentials_validity[credential.name] = 200
+            except Unauthorized:
+                credentials_validity[credential.name] = 401
+            except Forbidden:
+                credentials_validity[credential.name] = 403
+            except TooManyRequests:
+                credentials_validity[credential.name] = 429
+        
+        return credentials_validity
+
+    def check_crypto_address(self, tweet):
+        reply = None
+        if (any(word in tweet for word in ["drop", "comment", "put", "reply"])) and (any(w in tweet for w in ["address", "wallet", "$eth", "$sol","eth","sol"])):
+            if(any(w in tweet for w in ["sol", "solana"])):
+                reply = random.choice([" SOL address : {}".format(self.eth_addr)," sol : {}".format(self.eth_addr), self.sol_addr ])
+            else:
+                reply = random.choice([" ETH address : {}".format(self.eth_addr)," eth : {}".format(self.eth_addr), self.eth_addr ])
+        return reply
+
+
+            
+
+        
 
 
 
