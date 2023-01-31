@@ -1,6 +1,8 @@
 import tweepy
-import utils
+import src.services.utils as utils
 import random
+import logging
+
 
 CONFIG_FILENAME = "config.json"
 
@@ -24,6 +26,14 @@ class Enterer():
         self.sol_addr = config[utils.SOL_ADDR]
 
         self.language = language
+
+        logging.basicConfig(filename='log/log.txt',
+                            filemode='a',
+                            format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                            datefmt='%H:%M:%S',
+                            level=logging.INFO)
+        self.logger = logging.getLogger()
+
 
     # Action to execute if the tweet is a contest -> follow, like, retweet, tag frieds, comment crypto wallet address
 
@@ -100,7 +110,7 @@ class Enterer():
         return is_contest
 
     def run(self):
-        # build query depending on language and exlcude retweet and reply
+        # build query depending on language and exclude retweet and reply
         research = self.research[self.language]
         research += " -is:retweet -is:reply"
 
@@ -119,3 +129,4 @@ class Enterer():
                 except tweepy.TweepyException as e:
                     print("Error code : {}".format(e.__dict__))
                     continue
+
